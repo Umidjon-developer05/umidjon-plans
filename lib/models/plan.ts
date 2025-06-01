@@ -1,23 +1,31 @@
-import mongoose, { Schema, models } from "mongoose"
+import mongoose, { Schema, models } from 'mongoose'
 
 export interface IPlan {
-  _id?: string
-  title: string
-  description?: string
-  scheduledTime: Date
-  isCompleted: boolean
-  createdAt: Date
-  updatedAt: Date
+	_id?: string
+	title: string
+	description?: string
+	scheduledTime: Date
+	isCompleted: boolean
+	userId: string // Foydalanuvchi ID si
+	telegramChatId: string // Tez qidirish uchun
+	createdAt: Date
+	updatedAt: Date
 }
 
 const planSchema = new Schema<IPlan>(
-  {
-    title: { type: String, required: true },
-    description: { type: String },
-    scheduledTime: { type: Date, required: true },
-    isCompleted: { type: Boolean, default: false },
-  },
-  { timestamps: true },
+	{
+		title: { type: String, required: true },
+		description: { type: String },
+		scheduledTime: { type: Date, required: true },
+		isCompleted: { type: Boolean, default: false },
+		userId: { type: String, required: true },
+		telegramChatId: { type: String, required: true },
+	},
+	{ timestamps: true }
 )
 
-export const Plan = models.Plan || mongoose.model<IPlan>("Plan", planSchema)
+// Index qo'shish tez qidirish uchun
+planSchema.index({ userId: 1 })
+planSchema.index({ telegramChatId: 1 })
+
+export const Plan = models.Plan || mongoose.model<IPlan>('Plan', planSchema)

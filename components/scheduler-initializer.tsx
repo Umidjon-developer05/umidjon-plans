@@ -16,11 +16,11 @@ export function SchedulerInitializer() {
 			}
 		}
 
-		// 2 sekund kutib scheduler ni ishga tushirish
-		const timer = setTimeout(initializeScheduler, 2000)
+		// 3 sekund kutib scheduler ni ishga tushirish
+		const timer = setTimeout(initializeScheduler, 3000)
 
 		return () => clearTimeout(timer)
 	}, [])
 
-	return null // Hech narsa render qilmaydi
+	return null
 }

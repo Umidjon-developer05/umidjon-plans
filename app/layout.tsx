@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import Navbar from '@/components/navbar'
 import { Toaster } from '@/components/toaster'
 import { SchedulerInitializer } from '@/components/scheduler-initializer'
+import { AuthProvider } from '@/lib/auth-context'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,14 +28,16 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<div className='min-h-screen flex flex-col'>
-						<Navbar />
-						<main className='flex-1 container mx-auto px-4 py-8'>
-							{children}
-						</main>
-					</div>
-					<Toaster />
-					<SchedulerInitializer />
+					<AuthProvider>
+						<div className='min-h-screen flex flex-col'>
+							<Navbar />
+							<main className='flex-1 container mx-auto px-4 py-8'>
+								{children}
+							</main>
+						</div>
+						<Toaster />
+						<SchedulerInitializer />
+					</AuthProvider>
 				</ThemeProvider>
 			</body>
 		</html>

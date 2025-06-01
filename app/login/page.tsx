@@ -57,7 +57,7 @@ export default function LoginPage() {
 
 	return (
 		<div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800'>
-			<div className='max-w-md w-full mx-4'>
+			<div className=' w-full mx-4'>
 				<div className='text-center mb-8'>
 					<Bot className='h-16 w-16 mx-auto text-blue-600 mb-4' />
 					<h1 className='text-3xl font-bold'>Reja Planner</h1>
@@ -65,19 +65,36 @@ export default function LoginPage() {
 						Telegram bot bilan rejalaringizni boshqaring
 					</p>
 				</div>
-				<div className='flex  w-full justify-between'>
-					<Alert className='mb-6'>
-						<MessageCircle className='h-4 w-4' />
-						<AlertTitle>Qanday boshlash kerak?</AlertTitle>
+				<div className='flex  w-full justify-between gap-3'>
+					<Alert
+						className='mb-6 flex justify-center flex-col'
+						variant='destructive'
+					>
+						<AlertTitle className='flex items-center gap-2'>
+							<MessageCircle className='h-4 w-4 ' />
+							Qanday boshlash kerak?
+						</AlertTitle>
 						<AlertDescription className='space-y-2'>
 							<p>1. Telegram da @BotFather ga o'ting</p>
 							<p>2. /newbot buyrug'i bilan yangi bot yarating</p>
 							<p>3. Bot token ni oling</p>
 							<p>4. @ChatidTelegramBot dan o'z Chat ID ni oling</p>
 						</AlertDescription>
+						<AlertTitle className='flex items-center gap-2 mt-2'>
+							<MessageCircle className='h-4 w-4 ' />
+							Eslatmalar!!
+						</AlertTitle>
+						<AlertDescription className='space-y-2'>
+							<p>1. Token va chatId to'g'ri bo'lshi kerak va zarur!!!</p>
+							<p>
+								2. @BotFather yaratilgan Telegram botga /start bosilishi shart
+								!!!{' '}
+							</p>
+							<p>3. Ismni iloji borija to'liq kiriting !!!!</p>
+						</AlertDescription>
 					</Alert>
 
-					<form onSubmit={handleSubmit}>
+					<form onSubmit={handleSubmit} className='w-full '>
 						<Card>
 							<CardHeader>
 								<CardTitle>Ro'yxatdan o'tish</CardTitle>

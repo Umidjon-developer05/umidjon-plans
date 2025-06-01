@@ -65,74 +65,75 @@ export default function LoginPage() {
 						Telegram bot bilan rejalaringizni boshqaring
 					</p>
 				</div>
+				<div className='flex  w-full justify-between'>
+					<Alert className='mb-6'>
+						<MessageCircle className='h-4 w-4' />
+						<AlertTitle>Qanday boshlash kerak?</AlertTitle>
+						<AlertDescription className='space-y-2'>
+							<p>1. Telegram da @BotFather ga o'ting</p>
+							<p>2. /newbot buyrug'i bilan yangi bot yarating</p>
+							<p>3. Bot token ni oling</p>
+							<p>4. @ChatidTelegramBot dan o'z Chat ID ni oling</p>
+						</AlertDescription>
+					</Alert>
 
-				<Alert className='mb-6'>
-					<MessageCircle className='h-4 w-4' />
-					<AlertTitle>Qanday boshlash kerak?</AlertTitle>
-					<AlertDescription className='space-y-2'>
-						<p>1. Telegram da @BotFather ga o'ting</p>
-						<p>2. /newbot buyrug'i bilan yangi bot yarating</p>
-						<p>3. Bot token ni oling</p>
-						<p>4. @ChatidTelegramBot dan o'z Chat ID ni oling</p>
-					</AlertDescription>
-				</Alert>
+					<form onSubmit={handleSubmit}>
+						<Card>
+							<CardHeader>
+								<CardTitle>Ro'yxatdan o'tish</CardTitle>
+								<CardDescription>
+									Telegram bot ma'lumotlaringizni kiriting
+								</CardDescription>
+							</CardHeader>
+							<CardContent className='space-y-4'>
+								<div className='space-y-2'>
+									<Label htmlFor='name'>Ismingiz (ixtiyoriy)</Label>
+									<Input
+										id='name'
+										placeholder='Ismingizni kiriting'
+										value={name}
+										onChange={e => setName(e.target.value)}
+									/>
+								</div>
 
-				<form onSubmit={handleSubmit}>
-					<Card>
-						<CardHeader>
-							<CardTitle>Ro'yxatdan o'tish</CardTitle>
-							<CardDescription>
-								Telegram bot ma'lumotlaringizni kiriting
-							</CardDescription>
-						</CardHeader>
-						<CardContent className='space-y-4'>
-							<div className='space-y-2'>
-								<Label htmlFor='name'>Ismingiz (ixtiyoriy)</Label>
-								<Input
-									id='name'
-									placeholder='Ismingizni kiriting'
-									value={name}
-									onChange={e => setName(e.target.value)}
-								/>
-							</div>
+								<div className='space-y-2'>
+									<Label htmlFor='chatId'>Telegram Chat ID</Label>
+									<Input
+										id='chatId'
+										placeholder='123456789'
+										value={telegramChatId}
+										onChange={e => setTelegramChatId(e.target.value)}
+										required
+									/>
+									<p className='text-xs text-muted-foreground'>
+										@ChatidTelegramBot dan oling
+									</p>
+								</div>
 
-							<div className='space-y-2'>
-								<Label htmlFor='chatId'>Telegram Chat ID</Label>
-								<Input
-									id='chatId'
-									placeholder='123456789'
-									value={telegramChatId}
-									onChange={e => setTelegramChatId(e.target.value)}
-									required
-								/>
-								<p className='text-xs text-muted-foreground'>
-									@ChatidTelegramBot dan oling
-								</p>
-							</div>
-
-							<div className='space-y-2'>
-								<Label htmlFor='botToken'>Telegram Bot Token</Label>
-								<Input
-									id='botToken'
-									type='password'
-									placeholder='1234567890:ABCdefGHIjklMNOpqrsTUVwxyz'
-									value={telegramBotToken}
-									onChange={e => setTelegramBotToken(e.target.value)}
-									required
-								/>
-								<p className='text-xs text-muted-foreground'>
-									@BotFather dan oling
-								</p>
-							</div>
-						</CardContent>
-						<CardFooter>
-							<Button type='submit' disabled={loading} className='w-full'>
-								{loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-								Ro'yxatdan o'tish
-							</Button>
-						</CardFooter>
-					</Card>
-				</form>
+								<div className='space-y-2'>
+									<Label htmlFor='botToken'>Telegram Bot Token</Label>
+									<Input
+										id='botToken'
+										type='password'
+										placeholder='1234567890:ABCdefGHIjklMNOpqrsTUVwxyz'
+										value={telegramBotToken}
+										onChange={e => setTelegramBotToken(e.target.value)}
+										required
+									/>
+									<p className='text-xs text-muted-foreground'>
+										@BotFather dan oling
+									</p>
+								</div>
+							</CardContent>
+							<CardFooter>
+								<Button type='submit' disabled={loading} className='w-full'>
+									{loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+									Ro'yxatdan o'tish
+								</Button>
+							</CardFooter>
+						</Card>
+					</form>
+				</div>
 			</div>
 		</div>
 	)

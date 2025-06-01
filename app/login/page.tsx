@@ -73,7 +73,7 @@ export default function LoginPage() {
 						<p>1. Telegram da @BotFather ga o'ting</p>
 						<p>2. /newbot buyrug'i bilan yangi bot yarating</p>
 						<p>3. Bot token ni oling</p>
-						<p>4. @userinfobot dan o'z Chat ID ni oling</p>
+						<p>4. @ChatidTelegramBot dan o'z Chat ID ni oling</p>
 					</AlertDescription>
 				</Alert>
 

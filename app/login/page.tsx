@@ -106,7 +106,7 @@ export default function LoginPage() {
 									required
 								/>
 								<p className='text-xs text-muted-foreground'>
-									@userinfobot dan oling
+									@ChatidTelegramBot dan oling
 								</p>
 							</div>
 

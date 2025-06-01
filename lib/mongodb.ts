@@ -6,24 +6,13 @@ if (!MONGODB_URI) {
 	throw new Error('Please define the MONGODB_URI environment variable')
 }
 
-let cached = (global as any).mongoose
-
 async function connectDB() {
-	if (cached.conn) {
-		return cached.conn
+	try {
+		await mongoose.connect(MONGODB_URI as string)
+		console.log('Connected to MongoDB')
+	} catch (error) {
+		console.error('Error connecting to MongoDB:', error)
 	}
-
-	if (!cached.promise) {
-		const opts = {
-			bufferCommands: false,
-		}
-
-		cached.promise = mongoose.connect(MONGODB_URI!, opts).then(mongoose => {
-			return mongoose
-		})
-	}
-	cached.conn = await cached.promise
-	return cached.conn
 }
 
 export default connectDB

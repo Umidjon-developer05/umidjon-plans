@@ -7,7 +7,7 @@ import TelegramBot from 'node-telegram-bot-api'
 let schedulerInitialized = false
 let cronJob: cron.ScheduledTask | null = null
 
-async function sendUserNotification(user: any, message: string) {
+async function sendUserNotification(user: any, plan: any, message: string) {
 	try {
 		console.log(`📤 Xabar yuborilmoqda: ${user.name} (${user.telegramChatId})`)
 		console.log(`🔑 Bot token: ${user.telegramBotToken.substring(0, 10)}...`)
@@ -15,14 +15,14 @@ async function sendUserNotification(user: any, message: string) {
 
 		const bot = new TelegramBot(user.telegramBotToken, { polling: false })
 
-		// Avval bot ma'lumotlarini tekshirish
-		const botInfo = await bot.getMe()
-		console.log(`🤖 Bot ma'lumotlari: ${botInfo.username}`)
-
 		await bot.sendMessage(user.telegramChatId, message, {
 			parse_mode: 'Markdown',
 			disable_notification: false,
 		})
+
+		// Xabar yuborilganligini belgilash
+		plan.notificationSent = true
+		await plan.save()
 
 		console.log(
 			`✅ Xabar muvaffaqiyatli yuborildi: ${user.name} (${user.telegramChatId})`
@@ -69,17 +69,18 @@ export async function initScheduler() {
 
 				const threeMinutesFromNow = new Date(now.getTime() + 3 * 60 * 1000)
 
-				// Keyingi 3 daqiqa ichida bajarilishi kerak bo'lgan rejalarni topish
+				// Keyingi 3 daqiqa ichida bajarilishi kerak bo'lgan va xabar yuborilmagan rejalarni topish
 				const upcomingPlans = await Plan.find({
 					scheduledTime: {
 						$gte: now,
 						$lte: threeMinutesFromNow,
 					},
 					isCompleted: false,
+					notificationSent: { $ne: true }, // Faqat xabar yuborilmagan rejalar
 				})
 
 				console.log(
-					`📋 ${upcomingPlans.length} ta yaqinlashayotgan reja topildi`
+					`📋 ${upcomingPlans.length} ta yangi yaqinlashayotgan reja topildi`
 				)
 
 				// Har bir reja uchun tegishli foydalanuvchiga xabar yuborish
@@ -99,6 +100,7 @@ export async function initScheduler() {
 
 						await sendUserNotification(
 							user,
+							plan,
 							`⚠️ *MUHIM ESLATMA*: "${plan.title}" rejangizni bajarish vaqti ${timeLeft} daqiqa qoldi! Ishni bajarishni boshlang!`
 						)
 					} else {
@@ -115,9 +117,12 @@ export async function initScheduler() {
 						$gte: oneMinuteAgo,
 					},
 					isCompleted: false,
+					notificationSent: { $ne: true }, // Faqat xabar yuborilmagan rejalar
 				})
 
-				console.log(`⏰ ${overduePlans.length} ta vaqti o'tgan reja topildi`)
+				console.log(
+					`⏰ ${overduePlans.length} ta yangi vaqti o'tgan reja topildi`
+				)
 
 				for (const plan of overduePlans) {
 					const user = activeUsers.find(
@@ -129,6 +134,7 @@ export async function initScheduler() {
 
 						await sendUserNotification(
 							user,
+							plan,
 							`❌ *VAQT TUGADI*: "${plan.title}" rejangizni bajarish vaqti tugadi! Iltimos, tezda bajaring yoki statusini yangilang!`
 						)
 					}

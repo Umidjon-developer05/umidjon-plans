@@ -9,7 +9,7 @@ import {
 	CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Loader2, Send, RefreshCw } from 'lucide-react'
+import { Loader2, Send, RefreshCw, RotateCcw } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/lib/auth-context'
 import { AuthGuard } from '@/components/auth-guard'
@@ -31,6 +31,7 @@ export default function DebugPage() {
 	const [debugData, setDebugData] = useState<DebugData | null>(null)
 	const [loading, setLoading] = useState(false)
 	const [testLoading, setTestLoading] = useState(false)
+	const [resetLoading, setResetLoading] = useState(false)
 
 	async function fetchDebugData() {
 		try {
@@ -77,6 +78,29 @@ export default function DebugPage() {
 		}
 	}
 
+	async function resetNotificationFlags() {
+		try {
+			setResetLoading(true)
+			const response = await fetch('/api/debug/reset-notifications', {
+				method: 'POST',
+			})
+
+			const data = await response.json()
+
+			if (data.success) {
+				toast.success(`${data.count} ta reja yangilandi!`)
+				fetchDebugData()
+			} else {
+				toast.error(`Xatolik: ${data.error}`)
+			}
+		} catch (error) {
+			console.error('Error resetting notification flags:', error)
+			toast.error('Xatolik yuz berdi')
+		} finally {
+			setResetLoading(false)
+		}
+	}
+
 	useEffect(() => {
 		fetchDebugData()
 	}, [])
@@ -108,6 +132,18 @@ export default function DebugPage() {
 									<Send className='h-4 w-4 mr-2' />
 								)}
 								Test xabar
+							</Button>
+							<Button
+								onClick={resetNotificationFlags}
+								disabled={resetLoading}
+								variant='destructive'
+							>
+								{resetLoading ? (
+									<Loader2 className='h-4 w-4 animate-spin mr-2' />
+								) : (
+									<RotateCcw className='h-4 w-4 mr-2' />
+								)}
+								Xabar bayroqlarini tiklash
 							</Button>
 						</div>
 					</div>
@@ -148,7 +184,18 @@ export default function DebugPage() {
 										{debugData.users.map((user, index) => (
 											<div key={index} className='p-3 border rounded'>
 												<p>
+													<strong>Ism:</strong> {user.name}
+												</p>
+												<p>
 													<strong>Chat ID:</strong> {user.chatId}
+												</p>
+												<p>
+													<strong>Holat:</strong>{' '}
+													{user.isActive ? '✅ Faol' : '❌ Faol emas'}
+												</p>
+												<p>
+													<strong>Bot token:</strong>{' '}
+													{user.hasToken ? '✅ Mavjud' : "❌ Yo'q"}
 												</p>
 											</div>
 										))}
@@ -214,6 +261,10 @@ export default function DebugPage() {
 												<p>
 													<strong>Qolgan vaqt:</strong> {plan.minutesLeft}{' '}
 													daqiqa
+												</p>
+												<p>
+													<strong>Xabar yuborilgan:</strong>{' '}
+													{plan.notificationSent ? '✅ Ha' : "❌ Yo'q"}
 												</p>
 											</div>
 										))}

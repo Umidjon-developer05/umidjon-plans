@@ -1,12 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
 import { User } from '@/lib/models/user'
+import { Plan } from '@/lib/models/plan'
 import TelegramBot from 'node-telegram-bot-api'
 
 export async function POST(request: NextRequest) {
 	try {
 		const body = await request.json()
-		const { userId, message } = body
+		const { userId, message, planId } = body
 
 		if (!userId || !message) {
 			return NextResponse.json(
@@ -41,6 +42,18 @@ export async function POST(request: NextRequest) {
 			})
 
 			console.log(`✅ Test xabar muvaffaqiyatli yuborildi`)
+
+			// Agar planId berilgan bo'lsa, rejani yangilash
+			if (planId) {
+				const plan = await Plan.findById(planId)
+				if (plan) {
+					plan.notificationSent = true
+					await plan.save()
+					console.log(
+						`✅ Reja notificationSent = true ga yangilandi: ${planId}`
+					)
+				}
+			}
 
 			return NextResponse.json({
 				success: true,

@@ -49,6 +49,7 @@ export async function GET() {
 				minutesLeft: Math.ceil(
 					(new Date(plan.scheduledTime).getTime() - now.getTime()) / (60 * 1000)
 				),
+				notificationSent: plan.notificationSent || false,
 			})),
 			upcomingPlansDetails: upcomingPlans.map(plan => ({
 				id: plan._id,
@@ -58,6 +59,7 @@ export async function GET() {
 				minutesLeft: Math.ceil(
 					(new Date(plan.scheduledTime).getTime() - now.getTime()) / (60 * 1000)
 				),
+				notificationSent: plan.notificationSent || false,
 			})),
 		})
 	} catch (error) {

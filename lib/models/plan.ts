@@ -6,8 +6,9 @@ export interface IPlan {
 	description?: string
 	scheduledTime: Date
 	isCompleted: boolean
-	userId: string // Foydalanuvchi ID si
-	telegramChatId: string // Tez qidirish uchun
+	userId: string
+	telegramChatId: string
+	notificationSent: boolean // Xabar yuborilganligini saqlash uchun
 	createdAt: Date
 	updatedAt: Date
 }
@@ -20,6 +21,7 @@ const planSchema = new Schema<IPlan>(
 		isCompleted: { type: Boolean, default: false },
 		userId: { type: String, required: true },
 		telegramChatId: { type: String, required: true },
+		notificationSent: { type: Boolean, default: false }, // Xabar yuborilganligini saqlash uchun
 	},
 	{ timestamps: true }
 )

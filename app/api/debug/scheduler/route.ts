@@ -1,19 +1,7 @@
 import { NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
 import { Plan } from '@/lib/models/plan'
-import mongoose, { models } from 'mongoose'
-
-const UserSettings =
-	models.UserSettings ||
-	mongoose.model(
-		'UserSettings',
-		new mongoose.Schema(
-			{
-				telegramChatId: { type: String, required: true, unique: true },
-			},
-			{ timestamps: true }
-		)
-	)
+import { User } from '@/lib/models/user'
 
 export async function GET() {
 	try {
@@ -32,7 +20,7 @@ export async function GET() {
 		})
 
 		// Barcha foydalanuvchilarni olish
-		const allUsers = await UserSettings.find()
+		const allUsers = await User.find()
 
 		// Barcha rejalarni olish
 		const allPlans = await Plan.find().sort({ scheduledTime: 1 })
@@ -44,23 +32,29 @@ export async function GET() {
 			upcomingPlans: upcomingPlans.length,
 			totalUsers: allUsers.length,
 			totalPlans: allPlans.length,
-			environmentChatId: process.env.TELEGRAM_CHAT_ID ? '✅ Mavjud' : "❌ Yo'q",
-			telegramBotToken: process.env.TELEGRAM_BOT_TOKEN
-				? '✅ Mavjud'
-				: "❌ Yo'q",
+			users: allUsers.map(user => ({
+				id: user._id,
+				chatId: user.telegramChatId,
+				name: user.name,
+				isActive: user.isActive,
+				hasToken: !!user.telegramBotToken,
+			})),
 			plans: allPlans.map(plan => ({
+				id: plan._id,
 				title: plan.title,
 				scheduledTime: plan.scheduledTime,
 				scheduledTimeLocal: new Date(plan.scheduledTime).toLocaleString(),
 				isCompleted: plan.isCompleted,
+				userId: plan.userId,
 				minutesLeft: Math.ceil(
 					(new Date(plan.scheduledTime).getTime() - now.getTime()) / (60 * 1000)
 				),
 			})),
-			users: allUsers.map(user => ({ chatId: user.telegramChatId })),
 			upcomingPlansDetails: upcomingPlans.map(plan => ({
+				id: plan._id,
 				title: plan.title,
 				scheduledTime: plan.scheduledTime,
+				userId: plan.userId,
 				minutesLeft: Math.ceil(
 					(new Date(plan.scheduledTime).getTime() - now.getTime()) / (60 * 1000)
 				),

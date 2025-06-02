@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from './mode-toggle'
-import { CalendarCheck, ListTodo, Plus, LogOut, User } from 'lucide-react'
+import { CalendarCheck, ListTodo, Plus, LogOut, User, Bug } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
 import {
 	DropdownMenu,
@@ -45,6 +45,15 @@ export default function Navbar() {
 					>
 						<Plus className='h-4 w-4' />
 						<span>Yangi reja</span>
+					</Link>
+					<Link
+						href='/debug'
+						className={`flex items-center gap-1 ${
+							pathname === '/debug' ? 'font-medium' : 'text-muted-foreground'
+						}`}
+					>
+						<Bug className='h-4 w-4' />
+						<span>Debug</span>
 					</Link>
 				</nav>
 

@@ -9,15 +9,30 @@ let cronJob: cron.ScheduledTask | null = null
 
 async function sendUserNotification(user: any, message: string) {
 	try {
+		console.log(`📤 Xabar yuborilmoqda: ${user.name} (${user.telegramChatId})`)
+		console.log(`🔑 Bot token: ${user.telegramBotToken.substring(0, 10)}...`)
+		console.log(`📝 Xabar: ${message}`)
+
 		const bot = new TelegramBot(user.telegramBotToken, { polling: false })
+
+		// Avval bot ma'lumotlarini tekshirish
+		const botInfo = await bot.getMe()
+		console.log(`🤖 Bot ma'lumotlari: ${botInfo.username}`)
+
 		await bot.sendMessage(user.telegramChatId, message, {
 			parse_mode: 'Markdown',
 			disable_notification: false,
 		})
-		console.log(`✅ Xabar yuborildi: ${user.telegramChatId} - ${user.name}`)
+
+		console.log(
+			`✅ Xabar muvaffaqiyatli yuborildi: ${user.name} (${user.telegramChatId})`
+		)
 		return true
 	} catch (error) {
-		console.error(`❌ Xabar yuborishda xatolik: ${user.telegramChatId}`, error)
+		console.error(
+			`❌ Xabar yuborishda xatolik: ${user.name} (${user.telegramChatId})`,
+			error
+		)
 		return false
 	}
 }
@@ -43,6 +58,15 @@ export async function initScheduler() {
 				const now = new Date()
 				console.log('⏰ Scheduler ishlayapti:', now.toLocaleString())
 
+				// Barcha faol foydalanuvchilarni olish
+				const activeUsers = await User.find({ isActive: true })
+				console.log(`👥 ${activeUsers.length} ta faol foydalanuvchi topildi`)
+
+				if (activeUsers.length === 0) {
+					console.log('⚠️ Hech qanday faol foydalanuvchi topilmadi')
+					return
+				}
+
 				const threeMinutesFromNow = new Date(now.getTime() + 3 * 60 * 1000)
 
 				// Keyingi 3 daqiqa ichida bajarilishi kerak bo'lgan rejalarni topish
@@ -52,24 +76,33 @@ export async function initScheduler() {
 						$lte: threeMinutesFromNow,
 					},
 					isCompleted: false,
-				}).populate('userId')
+				})
 
 				console.log(
 					`📋 ${upcomingPlans.length} ta yaqinlashayotgan reja topildi`
 				)
 
-				// Har bir reja uchun foydalanuvchiga xabar yuborish
+				// Har bir reja uchun tegishli foydalanuvchiga xabar yuborish
 				for (const plan of upcomingPlans) {
-					const user = await User.findById(plan.userId)
-					if (user && user.isActive) {
+					console.log(`🔍 Reja: "${plan.title}" - User ID: ${plan.userId}`)
+
+					const user = activeUsers.find(
+						u => u._id.toString() === plan.userId.toString()
+					)
+
+					if (user) {
 						const timeLeft = Math.ceil(
 							(new Date(plan.scheduledTime).getTime() - now.getTime()) /
 								(60 * 1000)
 						)
+						console.log(`⏱️ ${timeLeft} daqiqa qoldi: ${plan.title}`)
+
 						await sendUserNotification(
 							user,
 							`⚠️ *MUHIM ESLATMA*: "${plan.title}" rejangizni bajarish vaqti ${timeLeft} daqiqa qoldi! Ishni bajarishni boshlang!`
 						)
+					} else {
+						console.log(`❌ Foydalanuvchi topilmadi: ${plan.userId}`)
 					}
 				}
 
@@ -87,8 +120,13 @@ export async function initScheduler() {
 				console.log(`⏰ ${overduePlans.length} ta vaqti o'tgan reja topildi`)
 
 				for (const plan of overduePlans) {
-					const user = await User.findById(plan.userId)
-					if (user && user.isActive) {
+					const user = activeUsers.find(
+						u => u._id.toString() === plan.userId.toString()
+					)
+
+					if (user) {
+						console.log(`⏰ Vaqt tugadi: ${plan.title} - ${user.name}`)
+
 						await sendUserNotification(
 							user,
 							`❌ *VAQT TUGADI*: "${plan.title}" rejangizni bajarish vaqti tugadi! Iltimos, tezda bajaring yoki statusini yangilang!`

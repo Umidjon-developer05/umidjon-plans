@@ -16,7 +16,7 @@ import {
 export default function Navbar() {
 	const pathname = usePathname()
 	const { user, logout } = useAuth()
-
+	console.log('Navbar user:', user)
 	return (
 		<header className='border-b'>
 			<div className='container mx-auto px-4 py-3 flex items-center justify-between'>
@@ -46,15 +46,17 @@ export default function Navbar() {
 						<Plus className='h-4 w-4' />
 						<span>Yangi reja</span>
 					</Link>
-					<Link
-						href='/debug'
-						className={`flex items-center gap-1 ${
-							pathname === '/debug' ? 'font-medium' : 'text-muted-foreground'
-						}`}
-					>
-						<Bug className='h-4 w-4' />
-						<span>Debug</span>
-					</Link>
+					{user?.telegramChatId === '6038292163' && (
+						<Link
+							href='/debug'
+							className={`flex items-center gap-1 ${
+								pathname === '/debug' ? 'font-medium' : 'text-muted-foreground'
+							}`}
+						>
+							<Bug className='h-4 w-4' />
+							<span>Debug</span>
+						</Link>
+					)}
 				</nav>
 
 				<div className='flex items-center gap-2'>

@@ -62,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			const userData = await response.json()
 			setUser(userData.user)
 			localStorage.setItem('currentUser', JSON.stringify(userData.user))
+			document.cookie = `telegramChatId=${userData.user.telegramChatId}; path=/; max-age=31536000; secure; samesite=strict`
 			return true
 		} catch (error) {
 			console.error('Login error:', error)

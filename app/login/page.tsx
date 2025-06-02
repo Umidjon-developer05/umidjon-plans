@@ -40,7 +40,7 @@ export default function LoginPage() {
 			setLoading(true)
 
 			const success = await login(telegramChatId, telegramBotToken, name)
-
+			
 			if (success) {
 				toast.success("Muvaffaqiyatli ro'yxatdan o'tdingiz!")
 				router.push('/plans')
